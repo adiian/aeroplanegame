@@ -18,6 +18,14 @@ package
 		private var playerBulletsDelay:Number = 0;
 		
 		private var BULLET_SPEED:Number = 6;
+		private var ENEMY_SPEED:Number = 3;
+		private var ENEMY_BULLET_SPEED:Number = 4;
+		
+		private var enemyPlanes:Vector.<MovieClip> = new Vector.<MovieClip>();
+		
+		private var enemyBullets:Vector.<MovieClip> = new Vector.<MovieClip>();
+		
+		
 		
 		public function AeroplaneGameTutorial()
 		{
@@ -72,6 +80,45 @@ package
 			{
 				this.removeChild(playerBullets.shift());
 			}
+			
+
+			// add enemy planes
+			if (Math.random() < 0.01)
+			{
+				createEnemy();
+			}
+			
+			// update enemies
+			for each( var enemy:MovieClip in enemyPlanes)
+			{
+				enemy.y += ENEMY_SPEED / 2;
+			}
+			
+			// remove enemies which are getting out of the screen
+			while(enemyPlanes.length > 0 && enemyPlanes[0].y > 480 + 32)
+			{
+				this.removeChild(enemyPlanes.shift());
+			}
+
+			// shoot enemy bullets
+			if (Math.random() < 0.02 && enemyPlanes.length > 0)
+			{
+				enemy = enemyPlanes[Math.floor(Math.random() * enemyPlanes.length)];
+				
+				createEnemyBullet(enemy);
+			}
+			
+			// update enemies
+			for each( var enemyBullet:MovieClip in enemyBullets)
+			{
+				enemyBullet.y += ENEMY_BULLET_SPEED;
+			}
+			
+			// remove enemies which are getting out of the screen
+			while(enemyBullets.length > 0 && enemyBullets[0].y > 480 + 32)
+			{
+				this.removeChild(enemyBullets.shift());
+			}			
 		}
 		
 		private function keyUp(e:KeyboardEvent):void
@@ -114,6 +161,32 @@ package
 			
 			playerBullets.push(playerBullet);
 		}
+
+		private function createEnemy():void
+		{
+			var enemy:MovieClip = new EnemyRes();
+
+			enemy.x = enemy.width + Math.random() * (440 - enemy.width);
+			enemy.y = - enemy.width / 2;
+
+			this.addChild(enemy);
+
+			enemyPlanes.push(enemy);
+		}
+		
+		private function createEnemyBullet(enemy:MovieClip):void
+		{
+			var enemyBullet:MovieClip = new BulletRes();
+			
+			enemyBullet.x = enemy.x;
+			enemyBullet.y = enemy.y + enemy.width / 2;
+			enemyBullet.rotation = 180;
+			
+			this.addChild(enemyBullet);
+			
+			enemyBullets.push(enemyBullet);
+		}
+		
 		
 		
 	}
